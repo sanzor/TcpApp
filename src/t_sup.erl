@@ -7,7 +7,13 @@
 
 % API
 start_link()->
-    supervisor:start_link({local,?NAME},?NAME,[]).
+    case supervisor:start_link({local,?NAME},?NAME,[]) of
+        {ok,_}->   AcceptorCount=application:get_env(acceptor_count),
+                   [supervisor:start_child(t_sup,[X])||X<-lists:seq(0,AcceptorCount)];
+        {error,Error}->error(Error)
+    end.
+  
+
 
 % Callbacks
 init([])->
@@ -15,9 +21,10 @@ init([])->
     ChildSpec=[#{
         id => t_sup,
         start=>{t_sup,start_link,[]},
-        restart=>permanent,
+        restart=>transient,
         shutdown=>brutal_kill,
         mod=>[server],
         type=>worker
         }],
     {ok,{Strategy,ChildSpec}}.
+

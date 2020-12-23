@@ -1,4 +1,4 @@
--module(server).
+-module(worker).
 -behaviour(gen_server).
 -export([init/1,handle_cast/2,handle_call/3,handle_info/2]).
 
@@ -21,14 +21,7 @@ handle_call(Message,From,State)->
 
 handle_info(accept,State)->
     try 
-        {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),
-        {ok,NewServer}=server:start_link(State#state.socket),
-        case gen_tcp:controlling_process(State#state.socket,NewServer) of
-            {error,not_owner}->error("The pid is no longer the owner of the listening socket");
-            {error,closed}->error("Listen socket is closed");
-            {error,badarg}->error("badarg on controlling process")
-        end,
-        inet:setopts(State#state.socket,[{active,true}]),
+        {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),  
         {ok,State#state{socket=AcceptSocket}}
 
     catch

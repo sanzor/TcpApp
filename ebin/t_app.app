@@ -9,4 +9,4 @@
         {mod,{t_app,[]}},
         {env,[{listenPort,8080}]}
     ]
-}
+}.

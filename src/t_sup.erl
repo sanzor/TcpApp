@@ -8,8 +8,10 @@
 % API
 start_link()->
     case supervisor:start_link({local,?NAME},?NAME,[]) of
-        {ok,_}->   AcceptorCount=application:get_env(acceptor_count),
-                   [supervisor:start_child(t_sup,[X])||X<-lists:seq(0,AcceptorCount)];
+        {ok,Pid}->   AcceptorCount=application:get_env(acceptor_count),
+                     [supervisor:start_child(t_sup,[X])||X<-lists:seq(0,AcceptorCount)],
+                     {ok,Pid};
+                   
         {error,Error}->error(Error)
     end.
   

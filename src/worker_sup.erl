@@ -2,10 +2,7 @@
 -module(worker_sup).
 -behaviour(supervisor).
 -export([init/1,start_link/0]).
-
 -define(NAME,?MODULE).
-
-
 % API
 start_link()->
     {ok,Pid}=supervisor:start_link({local,?NAME},?NAME,[]),
@@ -15,13 +12,9 @@ start_listeners()->
     {ok,Count}=application:get_env(acceptorCount),
     [start_listener(X)|| X<-lists:seq(0,Count)],
     ok.
-
-
 start_listener(Value)->
     {ok,Pid}=supervisor:start_child(?MODULE,[Value]),
     {ok,Pid}.
-
-
 % Callbacks
 init(Args)->
     {ok,Port}=application:get_env(listenPort),

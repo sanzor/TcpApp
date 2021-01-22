@@ -1,12 +1,12 @@
 {
     application,sockapp,
     [
-        {vsn,"1.0"},
-        {description,"Template application"},
-        {modules,[sock_app,main_sup,worker_sup]},
-        {registered,[main_sup,server]},
-        {applications,[kernel,stdlib]},
-        {mod,{sock_app,[]}},
-        {env,[{listenPort,8080},{acceptorCount,20}]}
+        {vsn,"1.0.0"},
+        {description,"Erlang distributed socket server"},
+        {modules,[main_sup,worker_sup,sock_worker]},
+        {applications,[stdlib,kernel]},
+        {registered,[main_sup,worker_sup]},
+        {env,[{acceptorCount,20},{listenPort,8300}]},
+        {mod,{sock_app,[]}}
     ]
 }.

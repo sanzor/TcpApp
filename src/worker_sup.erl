@@ -10,7 +10,7 @@ start_link()->
   
 start_listeners()->
     {ok,Count}=application:get_env(acceptorCount),
-    [start_listener(X)|| X<-lists:seq(0,Count)],
+    [start_listener(X)|| X<-lists:seq(1,Count)],
     ok.
 start_listener(Value)->
     {ok,Pid}=supervisor:start_child(?MODULE,[Value]),

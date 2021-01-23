@@ -1,7 +1,7 @@
 -module(sock_worker).
 -behaviour(gen_server).
 -export([init/1,handle_cast/2,handle_call/3,handle_info/2]).
--export([start_link/2]).
+-export([start_link/1]).
 -define(NAME,?MODULE).
 -record(state,{
     socket,

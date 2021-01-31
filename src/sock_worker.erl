@@ -27,18 +27,24 @@ handle_info(accept,State)->
         Class:Reason:StackTrace -> erlang:raise(Class,Reason,StackTrace)
     end;
         
-handle_info({tcp,_,Message},State)->
+handle_info({tcp,Socket,Message},State)->
+    echo(Socket, Message),
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;
             _ -> unknown
           end,
     Payload=erlang:term_to_binary(Reply),
-    gen_tcp:send(State#state.socket,Payload),
+    gen_tcp:send(Socket,Payload),
     {noreply,State};
-
 handle_info({tcp_closed,_},State)->
     {stop,socket_closed,State}.
+
+
+echo(Socket,Message) when is_binary(Message)->
+    gen_tcp:send(Socket, Message);
+echo(Socket,Message) ->
+    gen_tcp:send(Socket, term_to_binary(Message)).
 
 handle_cast(_,State)->
     {noreply,State}.

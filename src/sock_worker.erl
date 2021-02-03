@@ -28,7 +28,6 @@ handle_info(accept,State)->
     end;
         
 handle_info({tcp,Socket,Message},State)->
-    echo(Socket, Message),
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;
@@ -40,11 +39,6 @@ handle_info({tcp,Socket,Message},State)->
 handle_info({tcp_closed,_},State)->
     {stop,socket_closed,State}.
 
-
-echo(Socket,Message) when is_binary(Message)->
-    gen_tcp:send(Socket, Message);
-echo(Socket,Message) ->
-    gen_tcp:send(Socket, term_to_binary(Message)).
 
 handle_cast(_,State)->
     {noreply,State}.

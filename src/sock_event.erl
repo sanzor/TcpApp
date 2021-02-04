@@ -13,6 +13,8 @@ add_handler(Handler,Args)->
 delete_handler(Handler,Args)->
     gen_event:delete_handler(?NAME, Handler, Args).
 
+ev(Message)->
+    gen_event:notify(?NAME,Message)
 rx(Payload)->
     gen_event:notify(?NAME,Payload).
 tx(Payload)->

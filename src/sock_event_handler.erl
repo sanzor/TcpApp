@@ -1,3 +1,0 @@
--module(sock_event_handler).
--behaviour(gen_event).
--export([init/1,handle_call/2,handle_info/2]).

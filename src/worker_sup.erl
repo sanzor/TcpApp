@@ -20,7 +20,7 @@ init(Args)->
     {ok,Port}=application:get_env(listenPort),
     {ok,ListenSock}=gen_tcp:listen(Port,[]),
     spawn_link(fun start_listeners/0),
-    Strategy={simple_one_for_one,0,1},
+    Strategy={simple_one_for_one,2,4},
     ChildSpec=[#{
         id => worker,
         start=>{sock_worker,start_link,[ListenSock]},

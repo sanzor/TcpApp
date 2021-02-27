@@ -5,7 +5,8 @@
 -define(NAME,?MODULE).
 -record(state,{
     socket,
-    messages=[]
+    messages=[],
+    oob=[]
     }).
 %API
 
@@ -26,7 +27,7 @@ handle_info(accept,State)->
     catch
         Class:Reason:StackTrace -> erlang:raise(Class,Reason,StackTrace)
     end;
-        
+
 handle_info({tcp,_,Message},State)->
     
     Reply=case Message of
@@ -38,8 +39,9 @@ handle_info({tcp,_,Message},State)->
     gen_tcp:send(State#state.socket,Payload),
     {noreply,State};
 handle_info({tcp_closed,_},State)->
-    {stop,socket_closed,State}.
-
+    {stop,socket_closed,State};
+handle_info(Something,State=#state{oob=Ls})->
+    {noreply,State#state{oob=[Something|Ls]}}.
 
 handle_cast(_,State)->
     {noreply,State}.

@@ -1,3 +1,5 @@
+%%%  Main supervisor
+%%%  Starts a worker supervisor 
 -module(main_sup).
 -behaviour(supervisor).
 -export([start_link/0]).

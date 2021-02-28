@@ -1,4 +1,5 @@
-%%% Main supervisor
+%%% Worker Supervisor
+%%% Supervises the pool of workers , whose number is set from the config
 -module(worker_sup).
 -behaviour(supervisor).
 -export([init/1,start_link/0]).

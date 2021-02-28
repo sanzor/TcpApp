@@ -28,8 +28,8 @@ handle_info(accept,State)->
         Class:Reason:StackTrace -> erlang:raise(Class,Reason,StackTrace)
     end;
 
-handle_info({tcp,_,Message},State)->
-    
+handle_info({tcp,_,Str},State)->
+    Message=string:tokens(Str,"\r\n"),
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;

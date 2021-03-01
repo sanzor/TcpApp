@@ -18,6 +18,7 @@ start_link(ListenSocket,Count)->
     {ok,Pid}.
 
 init(ListenSock)->
+    gen_server:cast(self(), accept),
     {ok,#state{socket=ListenSock}}.
 
 handle_call(_,_,State)->

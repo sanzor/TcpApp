@@ -9,6 +9,7 @@
 -record(state,{
     socket,
     messages=[],
+    unknowns=[],
     oob=[]
     }).
 %API
@@ -25,15 +26,11 @@ handle_call(_,_,State)->
     {reply,State,State}.
 
 handle_info(accept,State)->
-    try 
         {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),  
-        {ok,State#state{socket=AcceptSocket}}
-    catch
-        Class:Reason:StackTrace -> erlang:raise(Class,Reason,StackTrace)
-    end;
+        {noreply,State#state{socket=AcceptSocket}};
 
 handle_info({tcp,_,RawMessage},State)->
-    TcpMessage=string:tokens(RawMessage,"\r\n"),
+    TcpMessage=RawMessage,
     ExistingMessages=[TcpMessage|State#state.messages],
     Reply=case TcpMessage of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
@@ -46,9 +43,8 @@ handle_info({tcp,_,RawMessage},State)->
 
 handle_info({tcp_closed,_},State)->
     {stop,socket_closed,State};
-handle_info(Something,State=#state{oob=Ls})->
-    io:fwrite("Unknown info ~p~n",[Something]),
-    {noreply,State#state{oob=[Something|Ls]}}.
+handle_info(Something,_)->
+    error("Unknown message ~p",[Something]).
 
 handle_cast(_,State)->
     {noreply,State}.

@@ -1,4 +1,4 @@
-%%%  The worker module that communicates with a given client 
+%%%  The worker module that communicates with a given client
 %%%  and responds to all his messages
 %%%
 -module(sock_worker).
@@ -25,10 +25,6 @@ init(ListenSock)->
 handle_call(_,_,State)->
     {reply,State,State}.
 
-handle_info(accept,State)->
-        {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),  
-        {noreply,State#state{socket=AcceptSocket}};
-
 handle_info({tcp,_,RawMessage},State)->
     TcpMessage=RawMessage,
     ExistingMessages=[TcpMessage|State#state.messages],
@@ -46,6 +42,9 @@ handle_info({tcp_closed,_},State)->
 handle_info(Something,_)->
     error("Unknown message ~p",[Something]).
 
+handle_cast(accept,State)->
+    {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),
+    {noreply,State#state{socket=AcceptSocket}};
 handle_cast(_,State)->
     {noreply,State}.
 

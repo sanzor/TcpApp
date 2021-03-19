@@ -1,8 +1,6 @@
 -module(sock_worker_SUITE).
 -export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2,suite/0]).
--export([can_receive_state/1,can_enter_tcp_clause/1,run_worker/1,testr/1]).
 -include_lib("stdlib/include/assert.hrl").
--include_lib("common_test/include/ct.hrl").
 
 
 suite()->
@@ -14,10 +12,10 @@ end_per_suite(Config)->
     ok.
 
 init_per_testcase(Case,Config)->
-    % application:start(sockapp),
+    application:start(sockapp),
     Config.
 end_per_testcase(Case,Config)->
-    % application:stop(sockapp),
+    application:stop(sockapp),
     ok.
 
 run_worker(Port)->
@@ -28,24 +26,18 @@ run_worker(Port)->
 
 all()->
     [
-        testr,
         can_receive_state,
         can_enter_tcp_clause
-        
     ].
 
-testr(Config)->
-    Port=?config(port,Config),
-    Port>8200.
-can_receive_state(Config)->
+can_receive_state()->
     Message=state,
-    Pid=sock_worker_SUITE:run_worker(8300),
-    ?assert({state,[],[],[],[]}=:=gen_server:call(Pid,Message)),
-    exit(Pid).
+    Pid=sock_worker_test:run_worker(),
+    ?assert({state,[],[],[],[]}=:=gen_server:call(Pid,Message)).
 
-can_enter_tcp_clause(Config)->
+can_enter_tcp_clause()->
     Message=state,
-    Pid=sock_worker_SUITE:run_worker(8300),
+    Pid=sock_worker_test:run_worker(),
     ?assert({state,[],[],[],[]}=:=gen_server:call(Pid,Message)),
     NewMessage=count,
     Pid ! {tcp,ign,NewMessage},

@@ -1,0 +1,52 @@
+=== Suite started at 2021-03-21 15:42:04
+=== Starting test, 2 test cases
+=cases         2
+=user          Adrian
+=host          DESKTOP-GOMS8S8
+=hosts         DESKTOP-GOMS8S8 
+=emulator_vsn  10.5
+=emulator      beam
+=otp_release   22
+=started       2021-03-21 15:42:04
+=case          sockapp_SUITE:init_per_suite
+=logfile       sockapp_suite.init_per_suite.html
+=started       2021-03-21 15:42:04
+=ended         2021-03-21 15:42:04
+=result        ok
+=elapsed       0.0
+=case          sockapp_SUITE:can_receive_state
+=logfile       sockapp_suite.can_receive_state.html
+=started       2021-03-21 15:42:04
+=ended         2021-03-21 15:42:04
+=result        failed: badarg, [{gen_tcp,connect,167},
+                                {sockapp_SUITE,init_client,52},
+                                {sockapp_SUITE,can_receive_state,33},
+                                {test_server,ts_tc,1754},
+                                {test_server,run_test_case_eval1,1263},
+                                {test_server,run_test_case_eval,1195}]
+=== *** FAILED test case 1 of 2 ***
+=case          sockapp_SUITE:can_enter_tcp_clause
+=logfile       sockapp_suite.can_enter_tcp_clause.html
+=started       2021-03-21 15:42:04
+=ended         2021-03-21 15:42:04
+=result        failed: badarg, [{gen_tcp,connect,167},
+                                {sockapp_SUITE,init_client,52},
+                                {sockapp_SUITE,can_enter_tcp_clause,42},
+                                {test_server,ts_tc,1754},
+                                {test_server,run_test_case_eval1,1263},
+                                {test_server,run_test_case_eval,1195}]
+=== *** FAILED test case 2 of 2 ***
+=case          sockapp_SUITE:end_per_suite
+=logfile       sockapp_suite.end_per_suite.html
+=started       2021-03-21 15:42:04
+=ended         2021-03-21 15:42:04
+=result        ok
+=elapsed       0.0
+=group_time    0.115s
+=== TEST COMPLETE, 0 ok, 2 failed of 2 test cases
+
+=finished      2021-03-21 15:42:04
+=failed        2
+=successful    0
+=user_skipped  0
+=auto_skipped  0

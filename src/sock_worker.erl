@@ -26,15 +26,16 @@ handle_call(_,_,State)->
     {reply,State,State}.
 
 handle_info({tcp,_,RawMessage},State)->
-    TcpMessage=RawMessage,
-    ExistingMessages=[TcpMessage|State#state.messages],
-    Reply=case TcpMessage of
+    Message=binary_to_term(RawMessage),
+    Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;
             _ -> unknown
           end,
     Payload=erlang:term_to_binary(Reply),
     gen_tcp:send(State#state.socket,Payload),
+    
+    ExistingMessages=[binary_to_term(RawMessage)|State#state.messages],
     {noreply,State#state{messages=ExistingMessages}};
 
 handle_info({tcp_closed,_},State)->

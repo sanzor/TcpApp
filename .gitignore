@@ -4,4 +4,3 @@ ebin/*
 .vscode/*
 *.lock
 *.beam
-.gitignore

@@ -26,7 +26,9 @@ handle_call(_,_,State)->
     {reply,State,State}.
 
 handle_info({tcp,_,RawMessage},State)->
+    io:format("Received: ~s",[RawMessage]),
     Message=binary_to_term(RawMessage),
+    
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;

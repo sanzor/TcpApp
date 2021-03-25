@@ -3,10 +3,9 @@
 -include_lib("common_test/include/ct.hrl").
 -export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2, can_receive_state/1, can_enter_tcp_clause/1]).
 
-suite()->
-    [{port,8300}].
+
 init_per_suite(Config)->
-    Config.
+    [{port,8300}|Config].
 
 end_per_suite(Config)->
     ok.
@@ -27,29 +26,24 @@ all()->
     ].
 
 can_receive_state(Config)->
-    Message=state,
-    Port=proplists:get_value(port, Config),
-    ct:pal("Port is ~p",[Port]),
+    Port=?config(port, Config),
     CData=init_client(Port),
-    
-    Pid = proplists:get_value(pid, CData).
-    
-    % ?assertMatch({state, _Socket,[],[],[]}, gen_server:call(Pid,Message)).
+    Pid = proplists:get_value(pid, CData),
+    ?assertMatch({state, _Socket,[],[],[]}, gen_server:call(Pid,state)).
 
 can_enter_tcp_clause(Config)->
-    Message=state,
-    
-    CData=init_client(?config(port,Config)),
-    Pid = proplists:get_value(pid, CData),
-    ?assertMatch({state,_Socket,[],[],[]}, gen_server:call(Pid,Message)),
-    NewMessage=count,
-    Pid ! {tcp,ign,NewMessage},
+    [{_,Socket},{_,Pid}]=init_client(?config(port,Config)),
+    ?assertMatch({state,_Socket,[],[],[]}, gen_server:call(Pid,state)),
+    Bmessage=binary_to_term(count),
+    gen_tcp:send(Socket,Bmessage),
+    Rec=receive 
+           RawMsg -> Value= binary_to_term(Value) ?assertEqual(is_integer(Value),Value=:=1,true) 
     ?assertMatch({state,_Socket,[count],[],[]}, gen_server:call(Pid,state)).
 
 
 
 init_client(Port)->
-    {ok,Socket}=gen_tcp:connect("localhost", Port, []),
+    {ok,Socket}=gen_tcp:connect("localhost", Port, [binary,]),
     {ok,Pid}=sock_worker:start_link(Socket,3),
     [{socket,Socket},{pid,Pid}].
 

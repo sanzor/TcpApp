@@ -1,1 +1,7 @@
 _build/
+logs/
+ebin/
+.vscode/
+*.lock
+*.beam
+.gitignore

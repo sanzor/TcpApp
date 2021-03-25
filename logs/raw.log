@@ -1,4 +1,4 @@
---- Test run on 2021/03/21 15:42:03 ---
+--- Test run on 2021/03/25 08:31:12 ---
 Converting "c:/Users/Adrian/Desktop/Erlang/simple_app/." to "c:/Users/Adrian/Desktop/Erlang/simple_app" and re-inserting with add_patha/1
 
 
@@ -8,40 +8,20 @@ Common Test v1.18 starting (cwd is c:/Users/Adrian/Desktop/Erlang/simple_app)
 Common Test: Running make in test directories...
 Including the following directories:
 "c:/Users/Adrian/Desktop/Erlang/simple_app/include"
-Recompile: sockapp_SUITE
-sockapp_SUITE.erl:6: Warning: function suite/0 is unused
-sockapp_SUITE.erl:11: Warning: variable 'Config' is unused
-sockapp_SUITE.erl:14: Warning: variable 'Case' is unused
-sockapp_SUITE.erl:17: Warning: variable 'Case' is unused
-sockapp_SUITE.erl:17: Warning: variable 'Config' is unused
-sockapp_SUITE.erl:30: Warning: variable 'Message' is unused
-sockapp_SUITE.erl:35: Warning: variable 'Pid' is unused
 
-CWD set to: "c:/Users/Adrian/Desktop/Erlang/simple_app/logs/ct_run.test988@DESKTOP-GOMS8S8.2021-03-21_15.42.04"
+CWD set to: "c:/Users/Adrian/Desktop/Erlang/simple_app/logs/ct_run.test7197@DESKTOP-GOMS8S8.2021-03-25_08.31.13"
 
 TEST INFO: 1 test(s), 2 case(s) in 1 suite(s)
 
 Testing Erlang.simple_app: Starting test, 2 test cases
 
-----------------------------------------------------
-2021-03-21 15:42:04.394
-Port is undefined
-
-
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-gen_tcp:connect failed on line 167
-Reason: badarg
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-Testing Erlang.simple_app: *** FAILED test case 1 of 2 ***
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-gen_tcp:connect failed on line 167
-Reason: badarg
+sockapp_SUITE:'-can_enter_tcp_clause/1-fun-1-' failed on line 40
+Reason: assertMatch
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Testing Erlang.simple_app: *** FAILED test case 2 of 2 ***
-Testing Erlang.simple_app: TEST COMPLETE, 0 ok, 2 failed of 2 test cases
+Testing Erlang.simple_app: TEST COMPLETE, 1 ok, 1 failed of 2 test cases
 
 Updating c:/Users/Adrian/Desktop/Erlang/simple_app/logs/index.html ... done
 Updating c:/Users/Adrian/Desktop/Erlang/simple_app/logs/all_runs.html ... done

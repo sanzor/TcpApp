@@ -27,23 +27,26 @@ all()->
 
 can_receive_state(Config)->
     Port=?config(port, Config),
-    CData=init_client(Port),
-    Pid = proplists:get_value(pid, CData),
-    ?assertMatch({state, _Socket,[],[],[]}, gen_server:call(Pid,state)).
+    [{_,Socket},{_,Pid}]=init_client(Port),
+    ?assertMatch({state, Socket,[]}, gen_server:call(Pid,state)).
 
 can_enter_tcp_clause(Config)->
     [{_,Socket},{_,Pid}]=init_client(?config(port,Config)),
-    ?assertMatch({state,_Socket,[],[],[]}, gen_server:call(Pid,state)),
-    Bmessage=binary_to_term(count),
-    gen_tcp:send(Socket,Bmessage),
-    Rec=receive 
-           RawMsg -> Value= binary_to_term(Value) ?assertEqual(is_integer(Value),Value=:=1,true) 
-    ?assertMatch({state,_Socket,[count],[],[]}, gen_server:call(Pid,state)).
+    ?assertMatch({state,_,[]}, gen_server:call(Pid,state)),
+    ?assertEqual(0,sockapp_SUITE:sendAndReceive(Socket, count)),
+    ?assertMatch({state,_,[count]},gen_server:call(Pid,state)),
+    ?assertEqual(1,sockapp_SUITE:sendAndReceive(Socket,count)),
+    ?assertMatch({state,_,[count,count]}, gen_server:call(Pid,state)),
+    ?assertMatch([count,count],sockapp_SUITE:sendAndReceive(Socket,messages)).
 
-
+sendAndReceive(Socket,Message)->
+    TCPMessage=binary_to_term(Message),
+    gen_tcp:send(Socket,TCPMessage),
+    Output=receive Received->binary_to_term(Received) end,
+    Output.
 
 init_client(Port)->
-    {ok,Socket}=gen_tcp:connect("localhost", Port, [binary,]),
+    {ok,Socket}=gen_tcp:connect("localhost", Port, [binary]),
     {ok,Pid}=sock_worker:start_link(Socket,3),
     [{socket,Socket},{pid,Pid}].
 

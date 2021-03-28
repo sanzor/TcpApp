@@ -25,7 +25,9 @@ handle_call(_,_,State)->
 
 
 handle_info({tcp,_,RawMessage},State)->
-    Message=binary_to_term(RawMessage),
+    F= fun (Message) when is_list(Message)->binary_to_term(list_to_binary(Message)) end,
+    Message=F(RawMessage),
+    io:format("Message at server is ~p",[Message]),
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;
@@ -33,13 +35,14 @@ handle_info({tcp,_,RawMessage},State)->
           end,
     Payload=erlang:term_to_binary(Reply),
     gen_tcp:send(State#state.socket,Payload),
-    ExistingMessages=[binary_to_term(RawMessage)|State#state.messages],
+    ExistingMessages=[Message|State#state.messages],
     {noreply,State#state{messages=ExistingMessages}};
 
 handle_info({tcp_closed,_},State)->
     {stop,socket_closed,State};
 handle_info(Something,_)->
     error("Unknown message ~p",[Something]).
+
 
 handle_cast(accept,State)->
     {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),

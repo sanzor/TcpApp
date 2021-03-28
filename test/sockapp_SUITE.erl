@@ -2,7 +2,7 @@
 -include_lib("stdlib/include/assert.hrl").
 -include_lib("common_test/include/ct.hrl").
 -export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2, can_receive_state/1, can_enter_tcp_clause/1]).
-
+-export([sendAndReceive/2]).
 
 init_per_suite(Config)->
     [{port,8300}|Config].
@@ -40,9 +40,12 @@ can_enter_tcp_clause(Config)->
     ?assertMatch([count,count],sockapp_SUITE:sendAndReceive(Socket,messages)).
 
 sendAndReceive(Socket,Message)->
-    TCPMessage=binary_to_term(Message),
+    ct:pal("Sending: ~p",[Message]),
+    TCPMessage=term_to_binary(Message),
     gen_tcp:send(Socket,TCPMessage),
-    Output=receive Received->binary_to_term(Received) end,
+    Output=receive Received-> ct:pal("Receiving ~p",[Received]),
+                              binary_to_term(Received) 
+           end,
     Output.
 
 init_client(Port)->

@@ -11,7 +11,7 @@
     messages=[]
     }).
 %API
-
+-define(STATE,<<131,100,0,5,115,116,97,116,101>>).
 start_link(ListenSocket,Count)->
     {ok,Pid}=gen_server:start_link(?NAME,ListenSocket,[]),
     {ok,Pid}.
@@ -20,23 +20,20 @@ init(ListenSock)->
     gen_server:cast(self(), accept),
     {ok,#state{socket=ListenSock}}.
 
-handle_call(_,_,State)->
-    {reply,State,State}.
+handle_call(Message,From,State)->{noreply,State}.
+handle_info({tcp,S,RawMessage},State) when RawMessage=:=?STATE ->
+    gen_tcp:send(S, term_to_binary(State)),
+    {noreply,State};
 
-
-handle_info({tcp,_,RawMessage},State)->
-    F= fun (Message) when is_list(Message)->binary_to_term(list_to_binary(Message)) end,
-    Message=F(RawMessage),
-    io:format("Message at server is ~p",[Message]),
+handle_info({tcp,S,RawMessage},State)->
+    Message=binary_to_term(RawMessage),
     Reply=case Message of
             count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
             messages->State#state.messages;
             _ -> unknown
           end,
-    Payload=erlang:term_to_binary(Reply),
-    gen_tcp:send(State#state.socket,Payload),
-    ExistingMessages=[Message|State#state.messages],
-    {noreply,State#state{messages=ExistingMessages}};
+    gen_tcp:send(S,erlang:term_to_binary(Reply)),
+    {noreply,State#state{messages=[Message|State#state.messages]}};
 
 handle_info({tcp_closed,_},State)->
     {stop,socket_closed,State};

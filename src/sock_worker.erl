@@ -4,7 +4,7 @@
 -module(sock_worker).
 -behaviour(gen_server).
 -export([init/1,handle_cast/2,handle_call/3,handle_info/2]).
--export([start_link/2]).
+-export([start_link/1]).
 -define(NAME,?MODULE).
 -record(state,{
     socket,
@@ -12,15 +12,22 @@
     }).
 %API
 -define(STATE,<<131,100,0,5,115,116,97,116,101>>).
-start_link(ListenSocket,Count)->
-    {ok,Pid}=gen_server:start_link(?NAME,ListenSocket,[]),
+start_link([ListenSocket])->
+    {ok,Pid}=gen_server:start_link(?NAME,[ListenSocket],[]),
     {ok,Pid}.
 
-init(ListenSock)->
-    gen_server:cast(self(), accept),
-    {ok,#state{socket=ListenSock}}.
+init([ListenSock])->
+    io:format("Got in init"),
+    %gen_server:cast(self(), accept),
+    {ok,#state{socket=ListenSock},0}.
 
 handle_call(Message,From,State)->{noreply,State}.
+
+handle_info(timeout,State=#state{socket=LSock})->
+    io:format("Got in timeout"),
+    {ok,Socket}=gen_tcp:accept(LSock),
+    worker_sup:start_child(),
+    {noreply,State#state{socket=Socket}};
 handle_info({tcp,S,RawMessage},State) when RawMessage=:=?STATE ->
     gen_tcp:send(S, term_to_binary(State)),
     {noreply,State};

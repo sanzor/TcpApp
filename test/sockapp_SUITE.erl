@@ -1,7 +1,8 @@
 -module(sockapp_SUITE).
 -include_lib("stdlib/include/assert.hrl").
 -include_lib("common_test/include/ct.hrl").
--export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2, can_receive_state/1, can_enter_tcp_clause/1]).
+-export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2]).
+ -export([can_receive_state/1, can_receive_message/1,can_change_state/1]).
 -export([sendAndReceive/2]).
 
 
@@ -36,7 +37,7 @@ all()->
     [
         can_receive_state,
         can_receive_message,
-        can_count,
+        % can_count,
         can_change_state
     ].
 
@@ -53,8 +54,8 @@ can_receive_message(Config)->
     ?assertMatch([messages],sockapp_SUITE:sendAndReceive(Socket, messages)).
 
 
-can_count(Config)->
-    [{_,Socket},{_,_}]=init_client(?config(port,Config)),
+% can_count(Config)->
+%     [{_,Socket},{_,_}]=init_client(?config(port,Config)),
 
 
 can_change_state(Config)->
@@ -65,6 +66,6 @@ can_change_state(Config)->
     ?assertEqual(1,sockapp_SUITE:sendAndReceive(Socket, count)),
     ?assertMatch({state,_,[count,count]},sockapp_SUITE:sendAndReceive(Socket, state)),
     ?assertMatch([count,count],sockapp_SUITE:sendAndReceive(Socket,messages)),
-    ?assertMatch({state,_,[messages,count,count]},sockapp_SUITE:sendAndReceive(Socket, state)),
+    ?assertMatch({state,_,[messages,count,count]},sockapp_SUITE:sendAndReceive(Socket, state)).
 
 

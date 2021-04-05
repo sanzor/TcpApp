@@ -2,29 +2,21 @@
 %%% Supervises the pool of workers , whose number is set from the config
 -module(worker_sup).
 -behaviour(supervisor).
--export([init/1,start_link/0]).
+-export([init/1,start_link/1,start_child/0]).
 -define(NAME,?MODULE).
 % API
-start_link()->
-    {ok,Pid}=supervisor:start_link({local,?NAME},?NAME,[]),
+start_link(LSock)->
+    {ok,Pid}=supervisor:start_link({local,?NAME},?NAME,[LSock]),
     {ok,Pid}.
   
-start_listeners()->
-    {ok,Count}=application:get_env(acceptorCount),
-    [start_listener(X)|| X<-lists:seq(1,Count)],
-    ok.
-start_listener(Value)->
-    {ok,Pid}=supervisor:start_child(?MODULE,[Value]),
-    {ok,Pid}.
+start_child()->
+    supervisor:start_child(?NAME, []).
 % Callbacks
-init(Args)->
-    {ok,Port}=application:get_env(listenPort),
-    {ok,ListenSock}=gen_tcp:listen(Port,[binary]),
-    spawn_link(fun start_listeners/0),
+init([LSock])->
     Strategy={simple_one_for_one,2,4},
     ChildSpec=[#{
         id => worker,
-        start=>{sock_worker,start_link,[ListenSock]},
+        start=>{sock_worker,start_link,[LSock]},
         restart=>transient,
         shutdown=>brutal_kill,
         mod=>[sock_worker],

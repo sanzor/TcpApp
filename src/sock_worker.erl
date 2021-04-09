@@ -17,6 +17,7 @@ start_link([ListenSocket])->
     {ok,Pid}.
 
 init([ListenSock])->
+    
     io:format("Got in init"),
     %gen_server:cast(self(), accept),
     {ok,#state{socket=ListenSock},0}.

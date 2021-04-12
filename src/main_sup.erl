@@ -15,7 +15,7 @@ start_link(LSock)->
 init(LSock)->
     Strategy={one_for_one,0,1},
     ChildSpec=[
-            {worker_sup,{worker_sup,start_link,[LSock]},permanent,brutal_kill,supervisor,[worker_sup]},
+            {worker_sup,{worker_sup,start_link,[]},permanent,brutal_kill,supervisor,[worker_sup]},
             {sock_server,{sock_server,start_link,[]},permanent,3000,worker,[sock_server]}
             ],
     {ok,{Strategy,ChildSpec}}.

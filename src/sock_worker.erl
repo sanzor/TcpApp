@@ -10,6 +10,7 @@
     socket,
     messages=[]
     }).
+
 %API
 -define(STATE,<<131,100,0,5,115,116,97,116,101>>).
 start_link([ListenSocket])->
@@ -17,18 +18,18 @@ start_link([ListenSocket])->
     {ok,Pid}.
 
 init([ListenSock])->
-    
-    io:format("Got in init"),
-    %gen_server:cast(self(), accept),
     {ok,#state{socket=ListenSock},0}.
 
-handle_call(Message,From,State)->{noreply,State}.
+handle_call(_,_,State)->
+    {noreply,State}.
 
 handle_info(timeout,State=#state{socket=LSock})->
     io:format("Got in timeout"),
     {ok,Socket}=gen_tcp:accept(LSock),
-    worker_sup:start_child(),
+    {ok,Pid}=worker_sup:start_child(),
+    gen_server:cast(sock_worker,{new,Pid}),
     {noreply,State#state{socket=Socket}};
+
 handle_info({tcp,S,RawMessage},State) when RawMessage=:=?STATE ->
     gen_tcp:send(S, term_to_binary(State)),
     {noreply,State};
@@ -48,10 +49,6 @@ handle_info({tcp_closed,_},State)->
 handle_info(Something,_)->
     error("Unknown message ~p",[Something]).
 
-
-handle_cast(accept,State)->
-    {ok,AcceptSocket}=gen_tcp:accept(State#state.socket),
-    {noreply,State#state{socket=AcceptSocket}};
 handle_cast(_,State)->
     {noreply,State}.
 

@@ -21,12 +21,13 @@ init(_)->
 
 
 %% callbacks
+
 handle_info(timeout,State)->
-    Port=application:get_env(port),
-    {ok,Lsock}=gen_tcp:listen(Port,[binary,{active,true}]),
+    {ok,Port}=application:get_env(listenPort),
+    {ok,Lsock}=gen_tcp:listen(Port,[]),
     {ok,Pid}=worker_sup:start_child(Lsock),
     Ref=erlang:monitor(process, Pid),
-    {noreply,State#state{socket=Lsock,cmap=dict:store(Ref, Pid, cmap)}};
+    {noreply,State#state{socket=Lsock,cmap=dict:store(Ref, Pid, State#state.cmap)}};
 
 handle_info({'DOWN',Ref,process,_,_},State)->
     erlang:demonitor(Ref),

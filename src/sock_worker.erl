@@ -13,9 +13,10 @@
 
 %API
 -define(STATE,<<131,100,0,5,115,116,97,116,101>>).
-start_link([ListenSocket])->
+start_link(ListenSocket)->
     {ok,Pid}=gen_server:start_link(?NAME,[ListenSocket],[]),
     {ok,Pid}.
+
 
 init([ListenSock])->
     {ok,#state{socket=ListenSock},0}.

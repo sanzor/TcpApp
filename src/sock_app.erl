@@ -6,15 +6,9 @@
 
 %api
 start(Mode,Arguments)->
-    case openSocket() of
-        {ok,Socket}->main_sup:start_link(Socket);
-        {error,Reason}->{error,Reason}
-    end.
+   {ok,Pid}=main_sup:start_link(),
+   {ok,Pid}.
 
-openSocket()->
-    {ok,Port}=application:get_env(listenPort),
-    {ok,ListenSock}=gen_tcp:listen(Port,[binary]),
-    {ok,ListenSock}.
 stop(Reason)->
     ok.
 

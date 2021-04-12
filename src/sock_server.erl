@@ -24,7 +24,7 @@ init(_)->
 
 handle_info(timeout,State)->
     {ok,Port}=application:get_env(listenPort),
-    {ok,Lsock}=gen_tcp:listen(Port,[]),
+    {ok,Lsock}=gen_tcp:listen(Port,[binary]),
     {ok,Pid}=worker_sup:start_child(Lsock),
     Ref=erlang:monitor(process, Pid),
     {noreply,State#state{socket=Lsock,cmap=dict:store(Ref, Pid, State#state.cmap)}};

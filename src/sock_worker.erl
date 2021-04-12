@@ -25,10 +25,9 @@ handle_call(_,_,State)->
     {noreply,State}.
 
 handle_info(timeout,State=#state{socket=LSock})->
-    io:format("Got in timeout"),
     {ok,Socket}=gen_tcp:accept(LSock),
-    {ok,Pid}=worker_sup:start_child(),
-    gen_server:cast(sock_worker,{new,Pid}),
+    {ok,Pid}=worker_sup:start_child(LSock),
+    gen_server:cast(sock_server,{new,Pid}),
     {noreply,State#state{socket=Socket}};
 
 handle_info({tcp,S,RawMessage},State) when RawMessage=:=?STATE ->

@@ -3,7 +3,7 @@
 %%%
 -module(sock_worker).
 -behaviour(gen_server).
--export([init/1,handle_cast/2,handle_call/3,handle_info/2]).
+-export([init/1,handle_cast/2,handle_call/3,handle_info/2,terminate/2]).
 -export([start_link/1]).
 -define(NAME,?MODULE).
 -record(state,{
@@ -49,6 +49,10 @@ handle_info({tcp_closed,_},State)->
 handle_info(Something,_)->
     error("Unknown message ~p",[Something]).
 
+terminate(socket_closed,_)->
+    io:format("Terminating with reason: socket was closed"),
+    ok;
+terminate(_,_)->ok.
 handle_cast(_,State)->
     {noreply,State}.
 

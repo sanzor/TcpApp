@@ -18,7 +18,7 @@ init(Args)->
     ChildSpec=[#{
         id => worker,
         start=>{sock_worker,start_link,[]},
-        restart=>transient,
+        restart=>temporary,
         shutdown=>brutal_kill,
         mod=>[sock_worker],
         type=>worker

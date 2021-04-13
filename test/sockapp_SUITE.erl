@@ -45,11 +45,11 @@ all()->
 can_receive_state(Config)->
     Port=?config(port, Config),
     [{_,Socket},{_,_}]=init_client(Port),
-    ?assertMatch({state, Socket,[]}, sockapp_SUITE:sendAndReceive(Socket, state)).
+    ?assertMatch({state, _,[]}, sockapp_SUITE:sendAndReceive(Socket, state)).
 
 can_receive_message(Config)->
     [{_,Socket},{_,_}]=init_client(?config(port,Config)),
-    ?assertMatch({state, Socket,[]}, sockapp_SUITE:sendAndReceive(Socket, state)),
+    ?assertMatch({state, _,[]}, sockapp_SUITE:sendAndReceive(Socket, state)),
     ?assertMatch([],sockapp_SUITE:sendAndReceive(Socket, messages)),
     ?assertMatch([messages],sockapp_SUITE:sendAndReceive(Socket, messages)).
 

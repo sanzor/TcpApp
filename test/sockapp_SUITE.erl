@@ -2,7 +2,7 @@
 -include_lib("stdlib/include/assert.hrl").
 -include_lib("common_test/include/ct.hrl").
 -export([all/0,init_per_suite/1,end_per_suite/1,init_per_testcase/2,end_per_testcase/2]).
- -export([can_receive_state/1, can_receive_message/1,can_change_state/1]).
+ -export([can_receive_state/1, can_receive_message/1,can_change_state/1,can_count/1]).
 -export([sendAndReceive/2]).
 
 
@@ -37,7 +37,7 @@ all()->
     [
         can_receive_state,
         can_receive_message,
-        % can_count,
+        can_count,
         can_change_state
     ].
 
@@ -54,8 +54,11 @@ can_receive_message(Config)->
     ?assertMatch([messages],sockapp_SUITE:sendAndReceive(Socket, messages)).
 
 
-% can_count(Config)->
-%     [{_,Socket},{_,_}]=init_client(?config(port,Config)),
+ can_count(Config)->
+     [{_,Socket},{_,_}]=init_client(?config(port,Config)),
+     [sockapp_SUITE:sendAndReceive(Socket, {message,X})  || X<-[0,2]],
+     ?assertMatch(3,sockapp_SUITE:sendAndReceive(Socket, count)).
+     
 
 
 can_change_state(Config)->

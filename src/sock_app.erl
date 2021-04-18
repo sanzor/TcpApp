@@ -5,7 +5,7 @@
 -export([start/2,stop/1]).
 
 %api
-start(Mode,Arguments)->
+start(normal,Arguments)->
    {ok,Pid}=main_sup:start_link(),
    {ok,Pid}.
 

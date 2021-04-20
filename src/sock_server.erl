@@ -1,6 +1,7 @@
 -module(sock_server).
 -behaviour(gen_server).
 -export([init/1,handle_info/2,start_link/1,handle_cast/2,handle_call/3]).
+-export([children/1]).
 -record(state,{
        socket,
        cmap
@@ -15,12 +16,15 @@ start_link(Args)->
     {ok,Pid}.
 
 
+children(Filter) when is_function(Filter)->
+    gen_server:call(sock_server,{children,Filter}).
 
 init(_)->
     {ok,#state{cmap=dict:new()},0}.
 
 
 %% callbacks
+
 
 handle_info(timeout,State)->
     {ok,Port}=application:get_env(listenPort),
@@ -42,5 +46,11 @@ handle_cast({new,Pid},State)->
 handle_cast(_, State)->
     {noreply,State}.
 
+handle_call(children,_, State)->
+    {reply,State#state.cmap,State};
+handle_call({children,Filter},_,State)->
+    Reply=dict:filter(Filter, State#state.cmap),
+    {reply,Reply,State};
 handle_call(_,_,State)->
     {reply,State,State}.
+

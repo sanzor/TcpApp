@@ -5,9 +5,13 @@
 -export([start/2,stop/1]).
 
 %api
-start(normal,Arguments)->
+start(normal,[])->
    {ok,Pid}=main_sup:start_link(),
-   {ok,Pid}.
+   {ok,Pid};
+
+start({takeover,_OtherNode},[])->
+   {ok,Pid}=main_sup:start_link(),
+   Pid.
 
 stop(Reason)->
     ok.

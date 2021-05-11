@@ -4,3 +4,4 @@ ebin/*
 .vscode/*
 *.lock
 *.beam
+Mnesia*

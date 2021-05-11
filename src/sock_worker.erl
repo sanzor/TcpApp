@@ -24,6 +24,15 @@ init([ListenSock])->
 handle_call(_,_,State)->
     {noreply,State}.
 
+handle_message(Message,State) ->
+    Reply=case Message of
+        count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
+        messages->State#state.messages;
+        _ -> unknown
+      end,
+    Reply.
+
+
 handle_info(timeout,State=#state{socket=LSock})->
     {ok,Socket}=gen_tcp:accept(LSock),
     {ok,Pid}=worker_sup:start_child(LSock),
@@ -36,11 +45,7 @@ handle_info({tcp,S,RawMessage},State) when RawMessage=:=?STATE ->
 
 handle_info({tcp,S,RawMessage},State)->
     Message=binary_to_term(RawMessage),
-    Reply=case Message of
-            count -> lists:foldl(fun(_,Y)->Y+1 end,0,State#state.messages);
-            messages->State#state.messages;
-            _ -> unknown
-          end,
+    Reply=handle_message(Message,State),
     gen_tcp:send(S,erlang:term_to_binary(Reply)),
     {noreply,State#state{messages=[Message|State#state.messages]}};
 

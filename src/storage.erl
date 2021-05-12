@@ -1,5 +1,5 @@
 -module(storage).
--export([init/0]).
+-export([install/1]).
 -record(user,{
     id,
     name,
@@ -8,11 +8,11 @@
 
 install(Nodes)->
     ok=mnesia:create_schema(Nodes),
-    rpc:multicall(Nodes, application, start,[mnesia]),
+    % rpc:multicall(Nodes, application, start,[mnesia]),
     application:start(mnesia),
     mnesia:create_table(user,[{attributes,record_info(fields,user)},
-                              {index,#user.id}])
-    rpc:multicall(Nodes, application, start,[mnesia]).
+                              {index,#user.id}]),
+    % rpc:multicall(Nodes, application, start,[mnesia]).
 
 createUser(Name)->undefined.
 updateUser(Id,Position)->undefined.
